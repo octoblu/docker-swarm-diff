@@ -1,6 +1,8 @@
 package swarm
 
 import (
+	"sort"
+
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/octoblu/docker-swarm-diff/server"
 )
@@ -29,12 +31,16 @@ func (serv *Server) AddInstance(instance *Instance) {
 }
 
 // ServiceInstances represent what service instances
-// warm believes to be running on this particular service
+// swarm believes to be running on this particular service
 func (serv *Server) ServiceInstances() ([]server.ServiceInstance, error) {
 	serviceInstances := make([]server.ServiceInstance, len(serv.instances))
 	for i, instance := range serv.instances {
 		serviceInstances[i] = instance
 	}
+
+	sort.Slice(serviceInstances, func(i, j int) bool {
+		return serviceInstances[i].String() < serviceInstances[j].String()
+	})
 	return serviceInstances, nil
 }
 

@@ -51,6 +51,10 @@ func convertToServers(swarmServerMap map[string]*Server) []server.Server {
 		servers = append(servers, swarmServer)
 	}
 
+	sort.Slice(servers, func(i, j int) bool {
+		return servers[i].String() < servers[j].String()
+	})
+
 	return servers
 }
 

@@ -10,6 +10,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/aryann/difflib",
+			"repository": "https://github.com/aryann/difflib",
+			"vcs": "git",
+			"revision": "a1a4dd44eb11820695fbe83e00fb2301ee6eb54c",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/coreos/go-semver/semver",
 			"repository": "https://github.com/coreos/go-semver",
 			"vcs": "git",
@@ -2107,6 +2115,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/docker/machine",
+			"repository": "https://github.com/docker/machine",
+			"vcs": "git",
+			"revision": "457c02d06a155827c1c4af9b5ab38c0b6b4e48ea",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/fatih/color",
 			"repository": "https://github.com/fatih/color",
 			"vcs": "git",
@@ -2130,6 +2146,22 @@
 			"revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
 			"branch": "master",
 			"path": "ptypes/any",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/kr/pty",
+			"repository": "https://github.com/kr/pty",
+			"vcs": "git",
+			"revision": "2c10821df3c3cf905230d078702dfbe9404c9b23",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/kr/text",
+			"repository": "https://github.com/kr/text",
+			"vcs": "git",
+			"revision": "7cafcd837844e784b526369c9bce262804aebc60",
+			"branch": "main",
 			"notests": true
 		},
 		{

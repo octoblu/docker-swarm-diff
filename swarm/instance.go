@@ -32,5 +32,5 @@ func (instance *Instance) ServerID() string {
 }
 
 func (instance *Instance) String() string {
-	return fmt.Sprintf("%v: %v.%v:", instance.task.Status.State, instance.serviceName, instance.task.Slot)
+	return fmt.Sprintf("%v: %v.%v", instance.task.Status.State, instance.serviceName, instance.task.Slot)
 }
