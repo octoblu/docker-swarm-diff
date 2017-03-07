@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
+docker-swarm-diff
+entrypoint/docker-swarm-diff
+go-docker-swarm-diff
+entrypoint/go-docker-swarm-diff
+dist

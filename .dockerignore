@@ -1,0 +1,8 @@
+.git
+docker-swarm-diff
+entrypoint/docker-swarm-diff
+go-docker-swarm-diff
+entrypoint/go-docker-swarm-diff
+build.sh
+cross-compile.sh
+README.md
