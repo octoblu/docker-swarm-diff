@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_NAME=http-healthcheck
+APP_NAME=docker-swarm-diff
 BUILD_DIR=$PWD/dist
 IMAGE_NAME=local/$APP_NAME
 
@@ -40,6 +40,13 @@ cross_compile_build(){
 }
 
 main() {
+  local goos="$1"
+
+  if [ -n "$goos" ]; then
+    build_on_local "$goos" "amd64" > /dev/null
+    exit $?
+  fi
+
   cross_compile_build
 }
 main "$@"

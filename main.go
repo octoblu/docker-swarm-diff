@@ -30,6 +30,15 @@ func run(context *cli.Context) {
 	reality, err := reality.GetServers()
 	panicIfError("reality.GetServers", err)
 
+	for _, expectation := range expectations {
+		fmt.Println("server: ", expectation.String())
+		instances, err := expectation.ServiceInstances()
+		panicIfError("expectation.ServiceInstances", err)
+		for _, instance := range instances {
+			fmt.Println("instance: ", instance.String())
+		}
+	}
+
 	diffs := diff.Differentiate(expectations, reality)
 	if len(diffs) == 0 {
 		os.Exit(0)
