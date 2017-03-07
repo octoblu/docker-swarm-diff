@@ -8,6 +8,7 @@ import (
 
 	"github.com/aryann/difflib"
 	"github.com/coreos/go-semver/semver"
+	"github.com/fatih/color"
 	"github.com/octoblu/docker-swarm-diff/reality"
 	"github.com/octoblu/docker-swarm-diff/server"
 	"github.com/octoblu/docker-swarm-diff/swarm"
@@ -22,11 +23,11 @@ func main() {
 	app.Name = "docker-swarm-diff"
 	app.Version = version()
 	app.Action = run
-	app.Description = `Compare what docker swarm thinks should be running against what is actually running
-
-		- docker swarm thinks this should be running on this machine, but it isn't
-		+ this is running on a machine, but docker doesn't know about it
-`
+	app.Description = fmt.Sprintf(
+		"Compare what docker swarm thinks should be running against what is actually running\n   %v\n   %v",
+		color.RedString("- docker swarm thinks this should be running on this machine, but it isn't"),
+		color.YellowString("+ this is running on a machine, but docker doesn't know about it"),
+	)
 	app.Flags = []cli.Flag{}
 	app.Run(os.Args)
 }
@@ -42,14 +43,25 @@ func run(context *cli.Context) {
 
 	diffs := difflib.Diff(formattedExpectation, formattedReality)
 
-	if len(diffs) == 0 {
-		os.Exit(0)
-	}
+	exitCode := 0
 
 	for _, diff := range diffs {
+		if diff.Delta == difflib.LeftOnly {
+			color.Red(diff.String())
+			exitCode = 1
+			continue
+		}
+
+		if diff.Delta == difflib.RightOnly {
+			color.Yellow(diff.String())
+			exitCode = 1
+			continue
+		}
+
 		fmt.Println(diff.String())
 	}
-	os.Exit(1)
+
+	os.Exit(exitCode)
 }
 
 func format(servers []server.Server) string {

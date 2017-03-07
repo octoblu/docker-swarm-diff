@@ -1,0 +1,23 @@
+language: go
+go: '1.8'
+branches:
+  only:
+  - "/^v[0-9]/"
+install: true
+script: return 0
+before_deploy: "./build.sh"
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: qXiFdllXM1YWZvl7h3s9MbDAV/0hPQisO6aRn/rAvMcgweaoPD0PfFkb+v3xNkIqd+DuEVIW1c633PAu5sNYYrcfjLNK9BQGfQvfuIJtAa+00y9OP/GUYGn2VQnjNEAJOva6fw8gpvcKIZaGvGj3YAs+MrnxqJxLQcsD+1cb/mxF/JSOmJ712s9u5za0GcdK5HrG7G2FA7lZc5tgwXq+HU/1sJXAWeSEcGBMXKwJp/3tcVmFtniEIvaHpZFoVsT7eJktPB+B03TbA5daDqITQydSMVWQCkJGwF2kQHLxheb70PZXwivKTLtD92+WT4UIz9UOFaefzjJOagea5ut6ASu2w/4TJdcdqX1c6PXXnLVewDIo1d/PQ4iGhtXBrYFI9bqWZvmL6pYTQvwvCeLQUoCno7dHTDcd08dEQIiiySCJNsQNoqVKlgWoOfYCnJ1gP1yuXrZ6NaePD/H55aU29Yx3fhu30Cr4ykmeCZQRitpLAaGXmMTtUuRDtL/fjm5t3eyJ8kjUysZhbpsI9y69jDSJnKoRBxYLwGfg4h8OzyK20hTdLddcSDfHJzT6CIdQxIvyYpTu9iy3yhz/9U2mpDKWwBkplB/P1jPikplRPgY2tX0cGu1Tz66WI0tpBWzjkNpcZ2a90tSVXgaitDUGDXC3+CJvfb2J3JUj28Xlnhg=
+  file:
+    - dist/docker-swarm-diff-darwin-386
+    - dist/docker-swarm-diff-darwin-amd64
+    - dist/docker-swarm-diff-linux-386
+    - dist/docker-swarm-diff-linux-amd64
+    - dist/docker-swarm-diff-windows-386.exe
+    - dist/docker-swarm-diff-windows-amd64.exe
+  on:
+    repo: octoblu/docker-swarm-diff
+    tags: true
