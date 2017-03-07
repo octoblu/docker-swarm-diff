@@ -19,6 +19,9 @@ func NewInstance(serviceName string, task swarm.Task) *Instance {
 
 // Key returns a key that can be used to uniquelly identify this instance
 func (instance *Instance) Key() string {
+	if instance.task.Slot == 0 {
+		return fmt.Sprintf("%v.%v", instance.serviceName, instance.task.NodeID)
+	}
 	return fmt.Sprintf("%v.%v", instance.serviceName, instance.task.Slot)
 }
 
@@ -29,5 +32,5 @@ func (instance *Instance) ServerID() string {
 }
 
 func (instance *Instance) String() string {
-	return fmt.Sprintf("%v: %v.%v:", instance.serviceName, instance.task.Slot, instance.task.Status.State)
+	return fmt.Sprintf("%v: %v.%v:", instance.task.Status.State, instance.serviceName, instance.task.Slot)
 }
