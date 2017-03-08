@@ -33,7 +33,7 @@ func NewServer(node swarm.Node) *Server {
 func (serv *Server) FetchServerInstances() error {
 	containers, err := serv.getContainers()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	instances := make([]server.ServiceInstance, len(containers))
@@ -54,7 +54,7 @@ func (serv *Server) FetchServerInstances() error {
 // FetchServerInstances must be called first, else this will return an error
 func (serv *Server) ServiceInstances() ([]server.ServiceInstance, error) {
 	if serv.instances == nil {
-		return nil, fmt.Errorf("FetchServerInstances must be called first")
+		return nil, fmt.Errorf("FetchServerInstances must be called first (%v)", serv.String())
 	}
 
 	return serv.instances, nil

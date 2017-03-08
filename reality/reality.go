@@ -35,8 +35,9 @@ func GetServers() ([]server.Server, error) {
 		servers[i] = serv
 		go func() {
 			debug("serv.FetchServerInstaces: %v", serv.String())
-			errChan <- serv.FetchServerInstances()
-			debug("serv.FetchServerInstaces (done): %v, %v", serv.String())
+			fetchErr := serv.FetchServerInstances()
+			errChan <- fetchErr
+			debug("serv.FetchServerInstaces (done): %v, %v", serv.String(), fetchErr)
 		}()
 	}
 
