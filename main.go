@@ -9,9 +9,7 @@ import (
 	"github.com/aryann/difflib"
 	"github.com/coreos/go-semver/semver"
 	"github.com/fatih/color"
-	"github.com/octoblu/docker-swarm-diff/reality"
-	"github.com/octoblu/docker-swarm-diff/server"
-	"github.com/octoblu/docker-swarm-diff/swarm"
+	"github.com/octoblu/docker-swarm-diff/helpers"
 	"github.com/urfave/cli"
 	De "github.com/visionmedia/go-debug"
 )
@@ -33,15 +31,23 @@ func main() {
 }
 
 func run(context *cli.Context) {
-	expectation, err := swarm.GetServers()
-	panicIfError("swarm.GetServers", err)
-	reality, err := reality.GetServers()
-	panicIfError("reality.GetServers", err)
+	expectationChan := helpers.GetExpectationsAsync()
+	realityChan := helpers.GetRealityAsync()
 
-	formattedExpectation := strings.Split(format(expectation), "\n")
-	formattedReality := strings.Split(format(reality), "\n")
+	expectationResult := <-expectationChan
+	fatalIfError("getExpectations", expectationResult.Err)
+	realityResult := <-realityChan
+	fatalIfError("getReality", realityResult.Err)
 
-	diffs := difflib.Diff(formattedExpectation, formattedReality)
+	formattedExpectation, err := helpers.Format(expectationResult.Servers)
+	fatalIfError("format(expectation)", err)
+	formattedReality, err := helpers.Format(realityResult.Servers)
+	fatalIfError("format(reality)", err)
+
+	diffs := difflib.Diff(
+		strings.Split(formattedExpectation, "\n"),
+		strings.Split(formattedReality, "\n"),
+	)
 
 	exitCode := 0
 
@@ -64,49 +70,12 @@ func run(context *cli.Context) {
 	os.Exit(exitCode)
 }
 
-func format(servers []server.Server) string {
-	output := ""
-
-	for _, serv := range servers {
-		output += formatSubHeading(serv.String())
-
-		instances, err := serv.ServiceInstances()
-		panicIfError("serv.ServiceInstances", err)
-		for _, instance := range instances {
-			output += fmt.Sprintln(instance.String())
-		}
-	}
-
-	return output
-}
-
-func formatHeading(text string) string {
-	output := ""
-	output += fmt.Sprintln()
-	output += fmt.Sprintln(text)
-	output += fmt.Sprintln("======================================")
-	return output
-}
-
-func formatSubHeading(text string) string {
-	output := ""
-	output += fmt.Sprintln()
-	output += fmt.Sprintln(text)
-	output += fmt.Sprintln("--------------------------------------")
-	return output
-}
-
-func panicIfError(msg string, err error) {
+func fatalIfError(msg string, err error) {
 	if err == nil {
 		return
 	}
 
 	log.Panicln(msg, err.Error())
-}
-
-func printFormatted(heading string, servers []server.Server) {
-	fmt.Println(formatHeading(heading))
-	fmt.Println(format(servers))
 }
 
 func version() string {

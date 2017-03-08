@@ -12,7 +12,7 @@ import (
 	De "github.com/visionmedia/go-debug"
 )
 
-var debug = De.Debug("docker-swarm-diff:main")
+var debug = De.Debug("docker-swarm-diff:swarm")
 
 // GetServers returns all servers swarm knows about,
 // each containing the service instances that swarm thinks
@@ -28,15 +28,26 @@ func GetServers() ([]server.Server, error) {
 		return nil, err
 	}
 
-	for _, service := range services {
-		instances, err := getInstancesForService(service)
-		if err != nil {
-			return nil, err
-		}
+	errChan := make(chan error, len(services))
 
-		for _, instance := range instances {
-			serverID := instance.ServerID()
-			swarmServerMap[serverID].AddInstance(instance)
+	for _, service := range services {
+		go func(service swarm.Service) {
+			instances, err := getInstancesForService(service)
+			if err != nil {
+				errChan <- err
+			}
+
+			for _, instance := range instances {
+				serverID := instance.ServerID()
+				swarmServerMap[serverID].AddInstance(instance)
+			}
+			errChan <- nil
+		}(service)
+	}
+
+	for i := 0; i < len(services); i++ {
+		if getInstanceErr := <-errChan; getInstanceErr != nil {
+			return nil, getInstanceErr
 		}
 	}
 
