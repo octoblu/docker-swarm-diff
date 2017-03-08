@@ -13,7 +13,7 @@ build_on_local() {
     extension=".exe"
   fi
 
-  env GOOS="$goos" GOARCH="$goarch" go build -a -tags netgo -installsuffix cgo -ldflags '-w' -o "${BUILD_DIR}/${APP_NAME}-${goos}-${goarch}${extension}" .
+  env CGO_ENABLED=0 GOOS="$goos" GOARCH="$goarch" go build -a -tags netgo -installsuffix cgo -ldflags '-w' -o "${BUILD_DIR}/${APP_NAME}-${goos}-${goarch}${extension}" .
 }
 
 init() {
