@@ -4,8 +4,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/docker/docker/api"
-	"github.com/docker/docker/client"
+	"github.com/docker/engine-api/client"
 	"github.com/docker/go-connections/tlsconfig"
 )
 
@@ -13,7 +12,7 @@ import (
 // Use `host` to set the url to the docker server.
 // Use `dockerCertPath` to load the TLS certificates from.
 // Use `tlsVerify` to enable or disable TLS verification
-func NewClient(host, dockerCertPath string, tlsVerify bool) (*client.Client, error) {
+func NewClient(host, dockerCertPath string, tlsVerify bool) (client.APIClient, error) {
 	options := tlsconfig.Options{
 		CAFile:             filepath.Join(dockerCertPath, "ca.pem"),
 		CertFile:           filepath.Join(dockerCertPath, "cert.pem"),
@@ -31,7 +30,7 @@ func NewClient(host, dockerCertPath string, tlsVerify bool) (*client.Client, err
 		},
 	}
 
-	cli, err := client.NewClient(host, api.DefaultVersion, httpCli, nil)
+	cli, err := client.NewClient(host, client.DefaultVersion, httpCli, nil)
 	if err != nil {
 		return cli, err
 	}

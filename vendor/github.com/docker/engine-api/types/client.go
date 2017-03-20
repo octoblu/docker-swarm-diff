@@ -147,10 +147,6 @@ type ImageBuildOptions struct {
 	AuthConfigs    map[string]AuthConfig
 	Context        io.Reader
 	Labels         map[string]string
-	// squash the resulting image's layers to the parent
-	// preserves the original image and creates a new one from the parent with all
-	// the changes applied to a single layer
-	Squash bool
 }
 
 // ImageBuildResponse holds information
@@ -292,9 +288,4 @@ type ServiceListOptions struct {
 // TaskListOptions holds parameters to list  tasks with.
 type TaskListOptions struct {
 	Filter filters.Args
-}
-
-// PluginRemoveOptions holds parameters to remove plugins.
-type PluginRemoveOptions struct {
-	Force bool
 }

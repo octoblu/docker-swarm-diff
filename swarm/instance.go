@@ -3,7 +3,7 @@ package swarm
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/types/swarm"
+	"github.com/docker/engine-api/types/swarm"
 )
 
 // Instance is a service instance on a serveer

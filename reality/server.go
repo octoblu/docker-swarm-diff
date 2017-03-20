@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
+	"github.com/docker/engine-api/client"
+	"github.com/docker/engine-api/types"
+	"github.com/docker/engine-api/types/swarm"
 	"github.com/docker/machine/commands/mcndirs"
 	"github.com/docker/machine/libmachine"
 	"github.com/docker/machine/libmachine/check"
@@ -74,7 +74,7 @@ func (serv *Server) getContainers() ([]types.Container, error) {
 	return cli.ContainerList(context.Background(), types.ContainerListOptions{})
 }
 
-func (serv *Server) getDockerMachineClient() (*client.Client, error) {
+func (serv *Server) getDockerMachineClient() (client.APIClient, error) {
 	cli := libmachine.NewClient(mcndirs.GetBaseDir(), os.Getenv("DOCKER_CERT_PATH"))
 	host, err := cli.Load(serv.node.Description.Hostname)
 	if err != nil {
