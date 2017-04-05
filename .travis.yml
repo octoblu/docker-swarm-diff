@@ -17,8 +17,6 @@ deploy:
     - dist/docker-swarm-diff-darwin-amd64
     - dist/docker-swarm-diff-linux-386
     - dist/docker-swarm-diff-linux-amd64
-    - dist/docker-swarm-diff-windows-386.exe
-    - dist/docker-swarm-diff-windows-amd64.exe
   'on':
     repo: octoblu/docker-swarm-diff
     tags: true
