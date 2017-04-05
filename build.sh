@@ -32,7 +32,7 @@ fatal() {
 }
 
 cross_compile_build(){
-  for goos in darwin linux windows; do
+  for goos in darwin linux; do
     for goarch in 386 amd64; do
       build_on_local "$goos" "$goarch" > /dev/null
     done
