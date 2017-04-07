@@ -2,6 +2,7 @@ package swarm
 
 import (
 	"context"
+	"fmt"
 	"sort"
 
 	"github.com/docker/engine-api/client"
@@ -39,6 +40,11 @@ func GetServers() ([]server.Server, error) {
 
 			for _, instance := range instances {
 				serverID := instance.ServerID()
+				_, ok := swarmServerMap[serverID]
+				if !ok {
+					errChan <- fmt.Errorf("server '%v' not found for instance '%v'", serverID, instance.String())
+					return
+				}
 				swarmServerMap[serverID].AddInstance(instance)
 			}
 			errChan <- nil
