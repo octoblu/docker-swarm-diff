@@ -2,6 +2,7 @@ package reality
 
 import (
 	"context"
+	"fmt"
 	"sort"
 
 	"github.com/docker/engine-api/client"
@@ -36,7 +37,7 @@ func GetServers() ([]server.Server, error) {
 		go func() {
 			debug("serv.FetchServerInstaces: %v", serv.String())
 			fetchErr := serv.FetchServerInstances()
-			errChan <- fetchErr
+			errChan <- wrapError(serv.String(), fetchErr)
 			debug("serv.FetchServerInstaces (done): %v, %v", serv.String(), fetchErr)
 		}()
 	}
@@ -54,4 +55,12 @@ func GetServers() ([]server.Server, error) {
 	})
 
 	return servers, nil
+}
+
+func wrapError(name string, err error) error {
+	if err == nil {
+		return nil
+	}
+
+	return fmt.Errorf("%v: %v", name, err.Error())
 }
