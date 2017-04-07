@@ -124,6 +124,9 @@ func getInstancesForService(service swarm.Service) ([]*Instance, error) {
 			continue
 		}
 
+		if instance.ShouldIgnore() {
+			continue
+		}
 		instances = append(instances, instance)
 		knownInstances[instance.Key()] = true
 	}

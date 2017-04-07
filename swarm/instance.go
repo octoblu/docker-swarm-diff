@@ -31,6 +31,13 @@ func (instance *Instance) ServerID() string {
 	return instance.task.NodeID
 }
 
+// ShouldIgnore returns true if this instance should be ignored
+// typically only used if the instance is supposed to be shutdown
+// on a server
+func (instance *Instance) ShouldIgnore() bool {
+	return instance.task.Status.State == swarm.TaskStateShutdown
+}
+
 func (instance *Instance) String() string {
 	return fmt.Sprintf("%v: %v.%v", instance.task.Status.State, instance.serviceName, instance.task.Slot)
 }
