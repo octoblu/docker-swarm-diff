@@ -32,13 +32,17 @@ func GetServers() ([]server.Server, error) {
 	errChan := make(chan error, len(services))
 
 	for _, service := range services {
-		if service.UpdateStatus.State == "paused" {
-			errChan <- fmt.Errorf("service '%v' is in a paused state", service.ID)
-		} else if service.UpdateStatus.State == "completed" {
-			go func(service swarm.Service) {
+		go func(service swarm.Service) {
+			if service.UpdateStatus.State == swarm.UpdateStatePaused {
+				errChan <- fmt.Errorf("service '%v' is in a paused state", service.ID)
+				return
+			}
+			debug("service '%v' Global: '%v' state: '%v'", service.Spec.Name, service.Spec.Mode.Replicated == nil, service.UpdateStatus.State)
+			if service.UpdateStatus.State == "" || service.UpdateStatus.State == swarm.UpdateStateCompleted {
 				instances, err := getInstancesForService(service)
 				if err != nil {
 					errChan <- err
+					return
 				}
 
 				for _, instance := range instances {
@@ -50,11 +54,9 @@ func GetServers() ([]server.Server, error) {
 					}
 					swarmServerMap[serverID].AddInstance(instance)
 				}
-				errChan <- nil
-			}(service)
-		} else {
+			}
 			errChan <- nil
-		}
+		}(service)
 	}
 
 	for i := 0; i < len(services); i++ {
