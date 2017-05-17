@@ -34,7 +34,7 @@ func GetServers() ([]server.Server, error) {
 	for _, service := range services {
 		go func(service swarm.Service) {
 			if service.UpdateStatus.State == swarm.UpdateStatePaused {
-				errChan <- fmt.Errorf("service '%v' is in a paused state", service.ID)
+				errChan <- fmt.Errorf("service '%v' is in a paused state", service.Spec.Name)
 				return
 			}
 			debug("service '%v' Global: '%v' state: '%v'", service.Spec.Name, service.Spec.Mode.Replicated == nil, service.UpdateStatus.State)
