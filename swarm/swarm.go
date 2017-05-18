@@ -37,23 +37,20 @@ func GetServers() ([]server.Server, error) {
 				errChan <- fmt.Errorf("service '%v' is in a paused state", service.Spec.Name)
 				return
 			}
-			debug("service '%v' Global: '%v' state: '%v'", service.Spec.Name, service.Spec.Mode.Replicated == nil, service.UpdateStatus.State)
-			if service.UpdateStatus.State == "" || service.UpdateStatus.State == swarm.UpdateStateCompleted {
-				instances, err := getInstancesForService(service)
-				if err != nil {
-					errChan <- err
+			instances, err := getInstancesForService(service)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			for _, instance := range instances {
+				serverID := instance.ServerID()
+				_, ok := swarmServerMap[serverID]
+				if !ok {
+					errChan <- fmt.Errorf("server '%v' not found for instance '%v'", serverID, instance.String())
 					return
 				}
-
-				for _, instance := range instances {
-					serverID := instance.ServerID()
-					_, ok := swarmServerMap[serverID]
-					if !ok {
-						errChan <- fmt.Errorf("server '%v' not found for instance '%v'", serverID, instance.String())
-						return
-					}
-					swarmServerMap[serverID].AddInstance(instance)
-				}
+				swarmServerMap[serverID].AddInstance(instance)
 			}
 			errChan <- nil
 		}(service)
@@ -126,7 +123,7 @@ func getInstancesForService(service swarm.Service) ([]*Instance, error) {
 	knownInstances := make(map[string]bool)
 	instances := make([]*Instance, 0)
 	for _, task := range tasks {
-		instance := NewInstance(service.Spec.Name, task)
+		instance := NewInstance(service.Spec.Name, service, task)
 
 		if _, ok := knownInstances[instance.Key()]; ok {
 			continue

@@ -9,12 +9,13 @@ import (
 // Instance is a service instance on a serveer
 type Instance struct {
 	serviceName string
+	service     swarm.Service
 	task        swarm.Task
 }
 
 // NewInstance returns a new instance
-func NewInstance(serviceName string, task swarm.Task) *Instance {
-	return &Instance{serviceName: serviceName, task: task}
+func NewInstance(serviceName string, service swarm.Service, task swarm.Task) *Instance {
+	return &Instance{serviceName: serviceName, service: service, task: task}
 }
 
 // Key returns a key that can be used to uniquelly identify this instance
@@ -35,6 +36,9 @@ func (instance *Instance) ServerID() string {
 // typically only used if the instance is supposed to be shutdown
 // on a server
 func (instance *Instance) ShouldIgnore() bool {
+	if instance.service.UpdateStatus.State == swarm.UpdateStateUpdating {
+		return true
+	}
 	return instance.task.Status.State == swarm.TaskStateShutdown
 }
 
